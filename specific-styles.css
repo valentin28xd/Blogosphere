@@ -1,0 +1,53 @@
+html {
+    height: 100%; /* ensure the full height */
+}
+
+body {
+    display: block;
+    min-height: 100%;
+    margin: 0;
+}
+
+main {
+    padding-bottom: 60px; /* space for the footer */
+    min-height: calc(100vh - 120px); /* adjust 120px to account for header+footer */
+}
+
+footer {
+    height: 60px; /* Footer height */
+    background-color: #333; /* Footer color */
+    color: #fff; /* Text color */
+    text-align: center;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* General form styling */
+form input[type="text"], form input[type="email"], form textarea {
+    width: 100%; /* Ensures full width */
+    padding: 8px; /* Comfortable padding */
+    margin-top: 5px; /* Space above each field */
+    margin-bottom: 16px; /* Space below each field */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 4px; /* Rounded corners */
+}
+
+form label {
+    display: block; /* Makes the label a block element, forcing input below it */
+    margin-bottom: 5px; /* Space between label and input */
+}
+
+/* Styling for the submit button to match other form elements */
+input[type="submit"] {
+    background-color: #4CAF50; /* A green background for visibility */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}

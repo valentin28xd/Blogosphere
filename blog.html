@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogosphere - Blog</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="specific-styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">Blogosphere</a></h1>
+            <div class="user-menu" id="userMenu">
+                <span id="usernameDisplay">Username</span>
+                <div class="dropdown-content" id="dropdownContent">
+                    <button id="logoutButton">Delogare</button>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Acasă</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">Despre</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Adaugă o Nouă Postare</h2>
+            <form id="addPostForm">
+                <label for="title">Titlu:</label><br>
+                <input type="text" id="title" name="title" required><br>
+                <label for="content">Conținut:</label><br>
+                <textarea id="content" name="content" rows="4" required minlength="10"></textarea><br>
+                <button type="submit">Adaugă Postare</button>
+            </form>
+        </section>
+        <section>
+            <h2>Postările Mele</h2>
+            <div id="postList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Blogosphere Toate drepturile rezervate.</p>
+    </footer>
+
+    <!-- Biblioteca moment.js pentru formatarea datei -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <script>
+        document.getElementById("userMenu").addEventListener("click", function() {
+            var dropdownContent = document.getElementById("dropdownContent");
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+        // Funcție pentru adăugarea unei noi postări
+        function addPost(event) {
+            event.preventDefault();
+
+            var title = document.getElementById("title").value;
+            var content = document.getElementById("content").value;
+            var username = localStorage.getItem("username");
+
+            if (!title || !content) {
+                displayMessage('Te rugăm să completezi toate câmpurile.', 'error');
+                return;
+            }
+
+            var currentTime = moment().format('MMMM Do YYYY, h:mm:ss a');
+            var post = { username, title, content, time: currentTime };
+
+            var posts = JSON.parse(localStorage.getItem("posts")) || [];
+            posts.push(post);
+            localStorage.setItem("posts", JSON.stringify(posts));
+
+            addPostToList(post);
+            document.getElementById("title").value = "";
+            document.getElementById("content").value = "";
+            displayMessage('Postare adăugată cu succes.', 'success');
+        }
+
+        // Funcție pentru adăugarea unei postări la lista de postări
+        function addPostToList(post) {
+            var postList = document.getElementById("postList");
+            var newPost = document.createElement("article");
+            var newTitle = document.createElement("h3");
+            var newContent = document.createElement("p");
+
+            newTitle.textContent = post.title;
+            newContent.textContent = post.content;
+            newPost.setAttribute("title", "Postat la: " + post.time);
+
+            newPost.appendChild(newTitle);
+            newPost.appendChild(newContent);
+
+            var deleteButton = document.createElement("button");
+            deleteButton.textContent = "Șterge";
+            deleteButton.addEventListener("click", function() {
+                deletePost(post);
+                newPost.remove();
+            });
+            newPost.appendChild(deleteButton);
+
+            postList.insertBefore(newPost, postList.firstChild);
+        }
+
+        // Funcție pentru ștergerea unei postări și adăugarea unui buton "Undo"
+        function deletePost(post) {
+            var posts = JSON.parse(localStorage.getItem("posts")) || [];
+            var deletedPostIndex = -1;
+
+            posts.forEach(function(item, index) {
+                if (item.title === post.title && item.content === post.content && item.time === post.time) {
+                    deletedPostIndex = index;
+                }
+            });
+
+            if (deletedPostIndex !== -1) {
+                var deletedPost = posts.splice(deletedPostIndex, 1)[0];
+                localStorage.setItem("posts", JSON.stringify(posts));
+
+                var postList = document.getElementById("postList");
+                var newUndoButton = document.createElement("button");
+                newUndoButton.textContent = "Undo";
+                newUndoButton.addEventListener("click", function() {
+                    posts.splice(deletedPostIndex, 0, deletedPost);
+                    localStorage.setItem("posts", JSON.stringify(posts));
+
+                    addPostToList(deletedPost);
+
+                    newUndoButton.remove();
+                });
+                postList.insertBefore(newUndoButton, postList.childNodes[deletedPostIndex]);
+            }
+        }
+
+        document.getElementById("addPostForm").addEventListener("submit", addPost);
+
+        window.addEventListener("load", function() {
+            var username = localStorage.getItem("username");
+            var posts = JSON.parse(localStorage.getItem("posts")) || [];
+            posts.forEach(function(post) {
+                if (post.username === username) {
+                    addPostToList(post);
+                }
+            });
+        });
+
+        document.getElementById("logoutButton").addEventListener("click", function() {
+            localStorage.setItem("authenticated", "false");
+            window.location.href = "login.html";
+        });
+        window.addEventListener("load", function() {
+            var authenticated = localStorage.getItem("authenticated");
+            if (authenticated !== "true") {
+                window.location.href = "login.html"; // Redirecționează către pagina de login
+            }
+        });
+        window.addEventListener("load", function() {
+            var username = localStorage.getItem("username");
+            if (username) {
+                document.getElementById("usernameDisplay").textContent = username;
+            }
+        });
+        function displayMessage(message, type) {
+            const messageAlert = document.getElementById('messageAlert');
+            messageAlert.textContent = message;
+            messageAlert.style.display = 'block';
+            messageAlert.style.color = type === 'error' ? 'red' : 'green';
+            setTimeout(() => messageAlert.style.display = 'none', 4000);
+        }
+    </script>
+</body>
+</html>

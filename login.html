@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogosphere - Autentificare</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="login-page">
+    <main>
+        <section>
+            <h2>Autentificare</h2>
+            <form id="loginForm">
+                <label for="username">Nume Utilizator:</label><br>
+                <input type="text" id="username" name="username" required><br>
+                <label for="password">Parolă:</label><br>
+                <input type="password" id="password" name="password" required><br>
+                <button type="submit">Autentificare</button>
+            </form>
+            <p>Nu ai un cont? <a href="register.html">Înregistrează-te</a></p>
+        </section>
+    </main>
+
+    <script>
+        window.addEventListener("load", function() {
+            // Verificăm dacă utilizatorul este autentificat
+            var isAuthenticated = localStorage.getItem("authenticated");
+
+            // Dacă utilizatorul este autentificat, redirecționăm către index.html
+            if (isAuthenticated === "true") {
+                window.location.href = "index.html";
+            }
+
+            // Autentificare
+            document.getElementById("loginForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+                if (checkCredentials(username, password)) {
+                    // Autentificare reușită, setăm în localStorage că utilizatorul este autentificat
+                    localStorage.setItem("authenticated", "true");
+                    // Redirecționare către pagina de blog
+                    window.location.href = "blog.html";
+                } else {
+                    alert("Nume de utilizator sau parolă incorecte. Te rog să încerci din nou.");
+                }
+            });
+
+            // Funcție pentru verificarea credențialelor
+            function checkCredentials(username, password) {
+                // Obținem parola utilizatorului din localStorage
+                var storedPassword = localStorage.getItem(username);
+
+                // Verificăm dacă parola stocată corespunde cu cea introdusă de utilizator
+                if (storedPassword === password) {
+                    // Salvăm numele utilizatorului în localStorage
+                    localStorage.setItem("username", username);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

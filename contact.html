@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogosphere - Contact</title>
+    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="specific-styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <h1><a href="index.html" style="color: white; text-decoration: none;">Blogosphere</a></h1>
+            <div class="user-menu" id="userMenu">
+                <span id="usernameDisplay">Username</span>
+                <div class="dropdown-content" id="dropdownContent">
+                    <button id="logoutButton">Delogare</button>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Acasă</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">Despre</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Contacteaza-ma</h2>
+            <p>Daca ai intrebari, sugestii sau feedback, te rugam sa ne contactezi folosind formularul de mai jos.</p>
+            <form action="#" method="post">
+                <label for="name">Nume:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Introduceti un email valid">
+
+                <label for="message">Mesaj:</label>
+                <textarea id="message" name="message" required></textarea>
+
+                <button type="submit">Trimite</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Blogosphere Toate drepturile rezervate.</p>
+    </footer>
+    <script>
+        document.getElementById("userMenu").addEventListener("click", function() {
+            var dropdownContent = document.getElementById("dropdownContent");
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+        // Adăugăm un ascultător de eveniment pentru butonul de delogare
+        document.getElementById("logoutButton").addEventListener("click", function() {
+            // Ștergem sesiunea (sau datele de autentificare salvate) și redirecționăm utilizatorul către pagina de autentificare
+            localStorage.setItem("authenticated", "false");
+            window.location.href = "login.html";
+        });
+
+        // Verificăm dacă utilizatorul este autentificat
+        window.addEventListener("load", function() {
+            var isAuthenticated = checkAuthentication();
+
+            if (!isAuthenticated) {
+                window.location.href = "login.html";
+            }
+        });
+
+        // Funcție pentru verificarea autentificării utilizatorului
+        function checkAuthentication() {
+            // Verificăm dacă există date de autentificare stocate în localStorage
+            var authenticated = localStorage.getItem("authenticated");
+
+            // Verificăm dacă datele de autentificare sunt setate și sunt corecte
+            // În loc să verificăm doar dacă valoarea este "true", vom verifica dacă este diferită de null sau undefined
+            return authenticated && authenticated !== "false";
+        }
+        window.addEventListener("load", function() {
+            var username = localStorage.getItem("username");
+            if (username) {
+                document.getElementById("usernameDisplay").textContent = username;
+            }
+        });
+    </script>
+</body>
+</html>
